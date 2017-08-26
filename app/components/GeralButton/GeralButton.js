@@ -9,12 +9,11 @@ firebase.initializeApp({
   databaseURL: "https://mobilefinalecompjr.firebaseio.com",
   storageBucket: "mobilefinalecompjr.appspot.com"
 });
-var database = firebase.database();
 
 // create a component
 class GeralButton extends Component {
     render() {
-        let {buttonName, buttonColor, buttonBorderColor, buttonFunction} = this.props;
+        let {buttonName, buttonColor, buttonBorderColor} = this.props;
 
         return (
             <TouchableOpacity style={[styles.buttonWrap, {backgroundColor: buttonColor, borderColor: buttonBorderColor}]}>
