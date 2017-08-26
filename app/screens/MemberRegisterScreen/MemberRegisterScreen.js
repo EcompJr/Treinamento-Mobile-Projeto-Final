@@ -8,6 +8,7 @@ import GeralTextInput from './../../components/GeralTextInput/';
 class MemberRegisterScreen extends Component {
     render() {
         return (
+            
             <View style={styles.container}>
               <View style={styles.textWrap}>
                 <Text style={styles.titleText}>Junte-se a nós!</Text>
