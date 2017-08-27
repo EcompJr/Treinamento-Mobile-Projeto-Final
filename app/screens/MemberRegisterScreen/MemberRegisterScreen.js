@@ -1,36 +1,68 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking} from 'react-native';
+import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking, Picker} from 'react-native';
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
+import * as firebase from "firebase";
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
+  authDomain: "mobilefinalecompjr.firebaseapp.com",
+  databaseURL: "https://mobilefinalecompjr.firebaseio.com",
+  storageBucket: "mobilefinalecompjr.appspot.com"
+});
 
 // create a component
 class MemberRegisterScreen extends Component {
-    render() {
+  constructor() {
+    super();
+    this.state = {
+        name: '',
+        role: '',
+        email: '',
+        password: '',
+        ej: ''
+    };
+  }
+
+  updateState = (key, value) => {
+    const update = {[key]: value};
+    this.setState(update);
+  } 
+
+  register = () => {
+    //auth and send data to database
+  }  
+
+  render() {
         return (
-            
             <View style={styles.container}>
               <View style={styles.textWrap}>
                 <Text style={styles.titleText}>Junte-se a nós!</Text>
               </View>
               <View style={styles.separator}></View>
-              <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Empresa Júnior" isPassword={false}></GeralTextInput>
+              
+              <View style={[styles.inputWrap, {marginBottom: 20}]}>
+                <Picker style={styles.holderPicker} onValueChange={(itemValue, itemIndex) => this.setState({ej: itemValue})}>
+                  <Picker.Item style={styles.pickerItem} label="Java" value="java" />
+                  <Picker.Item style={styles.pickerItem} label="JavaScript" value="js" />
+                </Picker>
               </View>
+
               <View style={[styles.inputWrap]}>
-                <GeralTextInput placeholderName="Nome" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Nome" inputKey={'name'} updateState={this.updateState} isPassword={false}></GeralTextInput>
               </View>
               <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Cargo" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Cargo" inputKey={'role'} updateState={this.updateState} isPassword={false}></GeralTextInput>
               </View>
               <View style={[styles.inputWrap, {marginTop: 50}]}>
-                <GeralTextInput placeholderName="Email" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState}  isPassword={false}></GeralTextInput>
               </View>      
               <View style={[styles.inputWrap]}>
-                <GeralTextInput placeholderName="Senha" isPassword={true}></GeralTextInput>
+                <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState}  isPassword={true}></GeralTextInput>
               </View>                            
               <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Cadastrar" buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
+                <GeralButton buttonName="Cadastrar" memberRegister={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
               </View>
             </View>
         );
@@ -66,10 +98,9 @@ const styles = StyleSheet.create({
       height: 40
     }, passwordWrap: {
       marginTop: 20,
-    }, holderText: {
+    }, holderPicker: {
       backgroundColor: '#424242',      
-      fontFamily: 'AdventPro-Medium',
-      fontSize: 18    
+      color: '#fff'
     }
 });
 

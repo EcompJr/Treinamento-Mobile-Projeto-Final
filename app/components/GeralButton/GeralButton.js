@@ -1,24 +1,20 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import * as firebase from "firebase";
-
-firebase.initializeApp({
-  apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
-  authDomain: "mobilefinalecompjr.firebaseapp.com",
-  databaseURL: "https://mobilefinalecompjr.firebaseio.com",
-  storageBucket: "mobilefinalecompjr.appspot.com"
-});
 
 // create a component
 class GeralButton extends Component {
+    handleClick() {
+        this.props.memberRegister();
+    }
+
     render() {
-        let {buttonName, buttonColor, buttonBorderColor} = this.props;
+        let {buttonName, buttonColor, buttonBorderColor, memberRegister} = this.props;
 
         return (
-            <TouchableOpacity style={[styles.buttonWrap, {backgroundColor: buttonColor, borderColor: buttonBorderColor}]}>
+            <TouchableOpacity onPress={() => this.handleClick()} style={[styles.buttonWrap, {backgroundColor: buttonColor, borderColor: buttonBorderColor}]}>
                 <Text style={styles.buttonText}>{buttonName}</Text>
-            </TouchableOpacity>            
+            </TouchableOpacity>
         );
     }
 }
