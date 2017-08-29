@@ -3,9 +3,50 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking} from 'react-native';
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
+import * as firebase from "firebase";
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
+    authDomain: "mobilefinalecompjr.firebaseapp.com",
+    databaseURL: "https://mobilefinalecompjr.firebaseio.com",
+    storageBucket: "mobilefinalecompjr.appspot.com"
+  });
+}
 
 // create a component
 class LoginScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+        email: '',
+        password: ''
+    };
+  }
+
+  updateState = (key, value) => {
+    const update = {[key]: value};
+    this.setState(update);
+  } 
+
+  login = () => {
+    try {
+      if(this.state.password.length < 6) {
+        alert("A senha deve conter ao menos 6 caracteres!");
+        return;        
+      }
+
+      if(this.state.email.indexOf('.com') == -1 || this.state.email.indexOf('@') == -1) {
+        alert("O seu endereço de email está em formato incorreto!");
+        return;        
+      }
+
+      firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
+      //redirecionar
+    } catch(error) {
+      alert(error.toString());
+    }
+  }
     render() {
         return (
             <View style={styles.container}>
@@ -14,13 +55,13 @@ class LoginScreen extends Component {
               </View>
               <View style={styles.separator}></View>
               <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Email" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState} isPassword={false}></GeralTextInput>
               </View>
               <View style={[styles.inputWrap, styles.passwordWrap]}>
-                <GeralTextInput placeholderName="Senha" isPassword={true}></GeralTextInput>
+                <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState} isPassword={true}></GeralTextInput>
               </View>
               <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Conectar" buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
+                <GeralButton clickFunction={this.login} clickArguments="" buttonName="Conectar" buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
               </View>
             </View>
         );

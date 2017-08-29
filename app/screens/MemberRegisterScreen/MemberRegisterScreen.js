@@ -5,13 +5,14 @@ import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
 import * as firebase from "firebase";
 
-firebase.initializeApp({
-  apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
-  authDomain: "mobilefinalecompjr.firebaseapp.com",
-  databaseURL: "https://mobilefinalecompjr.firebaseio.com",
-  storageBucket: "mobilefinalecompjr.appspot.com"
-});
-
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
+    authDomain: "mobilefinalecompjr.firebaseapp.com",
+    databaseURL: "https://mobilefinalecompjr.firebaseio.com",
+    storageBucket: "mobilefinalecompjr.appspot.com"
+  });
+}
 // create a component
 class MemberRegisterScreen extends Component {
   constructor() {
@@ -31,9 +32,31 @@ class MemberRegisterScreen extends Component {
   } 
 
   register = () => {
-    //auth and send data to database
-  }  
+    try {
+      if(this.state.password.length < 6) {
+        alert("A senha deve conter ao menos 6 caracteres!");
+        return;        
+      }
 
+      if(this.state.email.indexOf('.com') == -1 || this.state.email.indexOf('@') == -1) {
+        alert("O seu endereço de email está em formato incorreto!");
+        return;        
+      }
+
+      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
+      firebase.database().ref('users/' + this.state.email.replace('@', '').replace('.','').replace('_', '')).set({
+        name: this.state.name,
+        role: this.state.role,
+        email: this.state.email,
+        password: this.state.password,
+        ej: this.state.ej      
+      });
+      //redirecionar
+    } catch(error) {
+      alert(error.toString());
+    }
+  }
+    
   render() {
         return (
             <View style={styles.container}>
@@ -44,8 +67,8 @@ class MemberRegisterScreen extends Component {
               
               <View style={[styles.inputWrap, {marginBottom: 20}]}>
                 <Picker style={styles.holderPicker} onValueChange={(itemValue, itemIndex) => this.setState({ej: itemValue})}>
-                  <Picker.Item style={styles.pickerItem} label="Java" value="java" />
-                  <Picker.Item style={styles.pickerItem} label="JavaScript" value="js" />
+                  <Picker.Item style={styles.pickerItem} label="Java" value="Java" />
+                  <Picker.Item style={styles.pickerItem} label="JavaScript" value="JavaScript" />
                 </Picker>
               </View>
 
@@ -62,7 +85,7 @@ class MemberRegisterScreen extends Component {
                 <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState}  isPassword={true}></GeralTextInput>
               </View>                            
               <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Cadastrar" memberRegister={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
+                <GeralButton buttonName="Cadastrar" clickArguments="" clickFunction={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
               </View>
             </View>
         );

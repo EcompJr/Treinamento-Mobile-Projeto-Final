@@ -1,22 +1,25 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Initialize from './../../router/router.js';
 
 // create a component
 class GeralButton extends Component {
-    handleClick() {
-        this.props.memberRegister();
+    handleClick(clickArguments) {
+        {this.props.clickFunction(clickArguments)};
     }
 
     render() {
-        let {buttonName, buttonColor, buttonBorderColor, memberRegister} = this.props;
+        let {buttonName, buttonColor, buttonBorderColor, clickFunction, clickArguments} = this.props;
 
         return (
-            <TouchableOpacity onPress={() => this.handleClick()} style={[styles.buttonWrap, {backgroundColor: buttonColor, borderColor: buttonBorderColor}]}>
+            <TouchableOpacity onPress={() => {this.handleClick(this.props.clickArguments)}} style={[styles.buttonWrap, {backgroundColor: buttonColor, borderColor: buttonBorderColor}]}>
                 <Text style={styles.buttonText}>{buttonName}</Text>
             </TouchableOpacity>
         );
     }
+
+
 }
 
 // define your styles

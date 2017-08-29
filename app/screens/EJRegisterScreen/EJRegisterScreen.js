@@ -3,9 +3,38 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking} from 'react-native';
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
+import * as firebase from "firebase";
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
+    authDomain: "mobilefinalecompjr.firebaseapp.com",
+    databaseURL: "https://mobilefinalecompjr.firebaseio.com",
+    storageBucket: "mobilefinalecompjr.appspot.com"
+  });
+}
 
 // create a component
 class EJRegisterScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+      ejName: '',
+      cityState: ''
+    };
+  }
+
+  updateState = (key, value) => {
+    const update = {[key]: value};
+    this.setState(update);
+  } 
+
+  register = () => {
+    firebase.database().ref('ej/' + this.state.ejName.replace(' ', '')).set({
+      ejName: this.state.ejName,
+      cityState: this.state.cityState    
+    });
+  }  
     render() {
         return (
             <View style={styles.container}>
@@ -14,13 +43,13 @@ class EJRegisterScreen extends Component {
               </View>
               <View style={styles.separator}></View>
               <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Nome da Empresa" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Nome da Empresa" inputKey={'ejName'} updateState={this.updateState} isPassword={false}></GeralTextInput>
               </View>
               <View style={[styles.inputWrap, styles.passwordWrap]}>
-                <GeralTextInput placeholderName="Cidade - Estado" isPassword={false}></GeralTextInput>
+                <GeralTextInput placeholderName="Cidade - Estado" inputKey={'cityState'} updateState={this.updateState} isPassword={false}></GeralTextInput>
               </View>
               <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Cadastrar" buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
+                <GeralButton buttonName="Cadastrar" clickFunction={this.register} buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
               </View>
             </View>
         );
