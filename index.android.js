@@ -9,6 +9,6 @@ import {
   AppRegistry
 } from 'react-native';
 
-import App from './app/index.js';
+import App from './app/screens/ListScreen/ListScreen.js';
 
 AppRegistry.registerComponent('ProjetoFinalMobile', () => App);
