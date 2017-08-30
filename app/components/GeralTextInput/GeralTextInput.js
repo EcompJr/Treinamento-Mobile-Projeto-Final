@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
     holderText: {
         backgroundColor: '#424242',      
         fontFamily: 'AdventPro-Medium',
-        fontSize: 18
+        fontSize: 18,
+        color: "#fff"
     }
 });
 

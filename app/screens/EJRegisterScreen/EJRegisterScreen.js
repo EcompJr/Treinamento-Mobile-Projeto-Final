@@ -4,6 +4,8 @@ import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, 
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
 import * as firebase from "firebase";
+import Router from './../../router/router.js';
+
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -34,26 +36,33 @@ class EJRegisterScreen extends Component {
       ejName: this.state.ejName,
       cityState: this.state.cityState    
     });
-  }  
-    render() {
-        return (
-            <View style={styles.container}>
-              <View style={styles.textWrap}>
-                <Text style={styles.titleText}>Cadastre sua EJ</Text>
-              </View>
-              <View style={styles.separator}></View>
-              <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Nome da Empresa" inputKey={'ejName'} updateState={this.updateState} isPassword={false}></GeralTextInput>
-              </View>
-              <View style={[styles.inputWrap, styles.passwordWrap]}>
-                <GeralTextInput placeholderName="Cidade - Estado" inputKey={'cityState'} updateState={this.updateState} isPassword={false}></GeralTextInput>
-              </View>
-              <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Cadastrar" clickFunction={this.register} buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
-              </View>
-            </View>
-        );
-    }
+    this.props.changeScreen('memberRegisterScreen');    
+  }
+
+  render() {
+    let {changeScreen} = this.props;
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleWrap}>
+          <View style={styles.textWrap}>
+            <Text style={styles.titleText}>Cadastre sua EJ</Text>
+          </View>
+          <View style={styles.separator}></View>
+        </View>
+        <View style={styles.inputsWrap}>
+          <View style={styles.inputWrap}>
+            <GeralTextInput placeholderName="Nome da Empresa" inputKey={'ejName'} updateState={this.updateState} isPassword={false}></GeralTextInput>
+          </View>
+          <View style={styles.inputWrap}>
+            <GeralTextInput placeholderName="Cidade - Estado" inputKey={'cityState'} updateState={this.updateState} isPassword={false}></GeralTextInput>
+          </View>
+        </View>
+        <View style={styles.buttonWrap}>
+          <GeralButton buttonName="Cadastrar" clickFunction={this.register} buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
+        </View>
+      </View>
+    );
+  }
 
 }
 
@@ -61,34 +70,36 @@ class EJRegisterScreen extends Component {
 const styles = StyleSheet.create({
     container: {
       backgroundColor: '#FAFAFC',
-      flex: 1
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
     }, titleText: {
       fontSize: 45,
       color: '#18BC41',
       textAlign: 'center',
       fontFamily: 'AdventPro-Medium'
     }, textWrap: {
-      marginTop: 60
     }, separator: {
-      marginTop: 20,
-      marginLeft: 135,
-      marginBottom: 60,
       borderBottomColor: '#424242', 
       borderBottomWidth: 2,
       width: 140
     }, buttonWrap: {
-      marginTop: 150
+      flex: 2
     }, inputWrap: {
-      width: 300,
-      marginTop: 80,
-      marginLeft: 60,
-      height: 40
-    }, passwordWrap: {
-      marginTop: 20,
+      paddingVertical: 3      
     }, holderText: {
       backgroundColor: '#424242',      
       fontFamily: 'AdventPro-Medium',
       fontSize: 18    
+    }, titleWrap: {
+      alignItems: 'center',
+      flex: 4,
+      paddingVertical: 7
+    }, inputsWrap: {
+      flex: 4,
+      width: 300,
+      paddingVertical: 4
     }
 });
 

@@ -25,14 +25,13 @@ class GeralButton extends Component {
 // define your styles
 const styles = StyleSheet.create({
     buttonWrap: {
-        marginTop: 20,
-        marginLeft: 130,
         width: 150,
         height: 60,      
         borderRadius: 28,
         borderWidth: 1
     }, buttonText: {
-        marginTop: 15,
+        paddingVertical: 13,
+        paddingHorizontal: 2,
         fontSize: 20,
         fontFamily: 'AdventPro-Medium',       
         color: 'black',

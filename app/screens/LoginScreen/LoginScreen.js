@@ -42,23 +42,27 @@ class LoginScreen extends Component {
       }
 
       firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
-      //redirecionar
+      alert('Login efetuado!');
+      this.props.changeScreen('listScreen');
     } catch(error) {
       alert(error.toString());
     }
   }
     render() {
+      let {changeScreen} = this.props;
         return (
             <View style={styles.container}>
-              <View style={styles.textWrap}>
+              <View style={styles.titleWrap}>
                 <Text style={styles.titleText}>Conecte-se!</Text>
+                <View style={styles.separator}></View>
               </View>
-              <View style={styles.separator}></View>
-              <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState} isPassword={false}></GeralTextInput>
-              </View>
-              <View style={[styles.inputWrap, styles.passwordWrap]}>
-                <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState} isPassword={true}></GeralTextInput>
+              <View style={styles.inputsWrap}>
+                <View style={styles.inputWrap}>
+                  <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState} isPassword={false}></GeralTextInput>
+                </View>
+                <View style={styles.inputWrap}>
+                  <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState} isPassword={true}></GeralTextInput>
+                </View>              
               </View>
               <View style={styles.buttonWrap}>
                 <GeralButton clickFunction={this.login} clickArguments="" buttonName="Conectar" buttonColor="#EEDB22" buttonBorderColor="white"></GeralButton>              
@@ -72,35 +76,37 @@ class LoginScreen extends Component {
 // define your styles
 const styles = StyleSheet.create({
     container: {
+      flex: 1,
       backgroundColor: '#FAFAFC',
-      flex: 1
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
     }, titleText: {
       fontSize: 45,
       color: '#18BC41',
       textAlign: 'center',
-      fontFamily: 'AdventPro-Medium'
-    }, textWrap: {
-      marginTop: 60
+      fontFamily: 'AdventPro-Medium',
+      alignItems: 'flex-start'
+    }, titleWrap: {
+      alignItems: 'center',
+      flex: 4,
+      paddingVertical: 7
     }, separator: {
-      marginTop: 20,
-      marginLeft: 135,
-      marginBottom: 60,
       borderBottomColor: '#424242', 
       borderBottomWidth: 2,
       width: 140
     }, buttonWrap: {
-      marginTop: 150
-    }, inputWrap: {
+      flex: 2
+    }, inputsWrap: {
+      flex: 5,
       width: 300,
-      marginTop: 80,
-      marginLeft: 60,
-      height: 40
-    }, passwordWrap: {
-      marginTop: 20,
+      paddingVertical: 4
     }, holderText: {
       backgroundColor: '#424242',      
       fontFamily: 'AdventPro-Medium',
       fontSize: 18    
+    }, inputWrap: {
+      paddingVertical: 5
     }
 });
 

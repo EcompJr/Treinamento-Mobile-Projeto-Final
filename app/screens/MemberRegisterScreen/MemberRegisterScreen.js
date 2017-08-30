@@ -31,7 +31,7 @@ class MemberRegisterScreen extends Component {
     this.setState(update);
   } 
 
-  register = () => {
+  register = async () => {
     try {
       if(this.state.password.length < 6) {
         alert("A senha deve conter ao menos 6 caracteres!");
@@ -43,53 +43,78 @@ class MemberRegisterScreen extends Component {
         return;        
       }
 
-      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password);
-      firebase.database().ref('users/' + this.state.email.replace('@', '').replace('.','').replace('_', '')).set({
-        name: this.state.name,
-        role: this.state.role,
-        email: this.state.email,
-        password: this.state.password,
-        ej: this.state.ej      
-      });
-      //redirecionar
+      var email = this.state.email;
+      var password = this.state.password;
+      var name = this.state.name;
+      var ej = this.state.ej;
+      var role = this.state.role;
+      var changeScreenF = this.props.changeScreen;
+
+      firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
+        var root = firebase.database().ref();
+        var uid = user.uid;
+        var postData = {
+           email: email,
+           password: password,
+           name: name,
+           ej: ej,
+           role: role
+        };
+        root.child("users").child(uid).set(postData);
+        alert('Cadastro realizado!');
+        changeScreenF('firstScreen');
+     })
     } catch(error) {
       alert(error.toString());
+    }
+
+
+  }
+
+  pickerFunction(itemIndex, itemValue) {
+    if(itemIndex == "add") {
+      this.props.changeScreen('ejRegisterScreen');
+    } else {
+      this.setState({ej: itemValue});
     }
   }
     
   render() {
-        return (
-            <View style={styles.container}>
-              <View style={styles.textWrap}>
-                <Text style={styles.titleText}>Junte-se a nós!</Text>
-              </View>
-              <View style={styles.separator}></View>
-              
-              <View style={[styles.inputWrap, {marginBottom: 20}]}>
-                <Picker style={styles.holderPicker} onValueChange={(itemValue, itemIndex) => this.setState({ej: itemValue})}>
-                  <Picker.Item style={styles.pickerItem} label="Java" value="Java" />
-                  <Picker.Item style={styles.pickerItem} label="JavaScript" value="JavaScript" />
-                </Picker>
-              </View>
-
-              <View style={[styles.inputWrap]}>
-                <GeralTextInput placeholderName="Nome" inputKey={'name'} updateState={this.updateState} isPassword={false}></GeralTextInput>
-              </View>
-              <View style={styles.inputWrap}>
-                <GeralTextInput placeholderName="Cargo" inputKey={'role'} updateState={this.updateState} isPassword={false}></GeralTextInput>
-              </View>
-              <View style={[styles.inputWrap, {marginTop: 50}]}>
-                <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState}  isPassword={false}></GeralTextInput>
-              </View>      
-              <View style={[styles.inputWrap]}>
-                <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState}  isPassword={true}></GeralTextInput>
-              </View>                            
-              <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Cadastrar" clickArguments="" clickFunction={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
-              </View>
+    let {changeScreen} = this.props;
+    return (
+        <View style={styles.container}>
+          <View style={styles.titleWrap}>
+            <Text style={styles.titleText}>Junte-se a nós!</Text>
+            <View style={styles.separator}></View>
+          </View>
+          
+          <View style={styles.inputsWrap}>
+            <View style={styles.inputWrap}>
+              <Picker style={styles.holderPicker} onValueChange={(itemValue, itemIndex) => this.pickerFunction(itemValue, itemIndex)}>
+              <Picker.Item style={styles.pickerItem} label="Empresa Júnior" value="add" />
+                <Picker.Item style={styles.pickerItem} label="Cadastre sua EJ" value="add" />
+              </Picker>
             </View>
-        );
-    }
+
+            <View style={[styles.inputWrap]}>
+              <GeralTextInput placeholderName="Nome" inputKey={'name'} updateState={this.updateState} isPassword={false}></GeralTextInput>
+            </View>
+            <View style={styles.inputWrap}>
+              <GeralTextInput placeholderName="Cargo" inputKey={'role'} updateState={this.updateState} isPassword={false}></GeralTextInput>
+            </View>
+            <View style={styles.inputWrap}>
+              <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState}  isPassword={false}></GeralTextInput>
+            </View>      
+            <View style={[styles.inputWrap]}>
+              <GeralTextInput placeholderName="Senha" inputKey={'password'} updateState={this.updateState}  isPassword={true}></GeralTextInput>
+            </View>      
+          </View>                      
+          <View style={styles.buttonWrap}>
+            <GeralButton buttonName="Cadastrar" clickArguments="" clickFunction={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
+          </View>
+        </View>
+    );
+  }
 
 }
 
@@ -97,33 +122,35 @@ class MemberRegisterScreen extends Component {
 const styles = StyleSheet.create({
     container: {
       backgroundColor: '#FAFAFC',
-      flex: 1
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
     }, titleText: {
       fontSize: 45,
       color: '#EEDB22',
       textAlign: 'center',
       fontFamily: 'AdventPro-Medium'
-    }, textWrap: {
-      marginTop: 60
+    }, titleWrap: {
+      alignItems: 'center',
+      flex: 2,
+      paddingVertical: 7
     }, separator: {
-      marginTop: 20,
-      marginLeft: 135,
-      marginBottom: 60,
       borderBottomColor: '#424242', 
       borderBottomWidth: 2,
       width: 140
     }, buttonWrap: {
-      marginTop: 80
+      flex: 1,
+      paddingVertical: 10
     }, inputWrap: {
-      width: 300,
-      marginTop: 10,
-      marginLeft: 60,
-      height: 40
-    }, passwordWrap: {
-      marginTop: 20,
+      paddingVertical: 3
     }, holderPicker: {
       backgroundColor: '#424242',      
       color: '#fff'
+    }, inputsWrap: {
+      flex: 8,
+      width: 300,
+      paddingVertical: 4
     }
 });
 

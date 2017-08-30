@@ -26,7 +26,7 @@ class Router extends Component {
         if(screenName == 'loginScreen') {
             return <LoginScreen changeScreen={this.changeScreen} />;
         } else if (screenName == 'ejRegisterScreen') {
-            return <EjRegisterScreen changeScreen={this.changeScreen} />;            
+            return <EJRegisterScreen changeScreen={this.changeScreen} />;            
         } else if (screenName == 'memberRegisterScreen') {
             return <MemberRegisterScreen changeScreen={this.changeScreen} />;            
         } else if(screenName == 'firstScreen') {
