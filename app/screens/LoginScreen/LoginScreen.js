@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking} from 'react-native';
+import { View, Text, StyleSheet , AsyncStorage, FlatList, Image, TextInput, TouchableOpacity, Linking} from 'react-native';
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
 import * as firebase from "firebase";
@@ -20,7 +20,8 @@ class LoginScreen extends Component {
     super();
     this.state = {
         email: '',
-        password: ''
+        password: '',
+        loading: false
     };
   }
 
@@ -30,23 +31,27 @@ class LoginScreen extends Component {
   } 
 
   login = () => {
-    try {
-      if(this.state.password.length < 6) {
-        alert("A senha deve conter ao menos 6 caracteres!");
-        return;        
+    changeScreenFunction = this.props.changeScreen;
+    this.setState({
+      loading: true
+    });
+    // Log in and display an alert to tell the user what happened.
+   firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password
+    ).then((userData) =>
+      {
+        this.setState({
+                loading: false
+              });
+              AsyncStorage.setItem('userData', JSON.stringify(userData));
+              changeScreenFunction('listScreen');
       }
-
-      if(this.state.email.indexOf('.com') == -1 || this.state.email.indexOf('@') == -1) {
-        alert("O seu endereço de email está em formato incorreto!");
-        return;        
-      }
-
-      firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
-      alert('Login efetuado!');
-      this.props.changeScreen('listScreen');
-    } catch(error) {
-      alert(error.toString());
-    }
+    ).catch((error) =>
+        {
+              this.setState({
+                loading: false
+              });
+        alert('Login falhou! Tente novamente: '+error);
+    });
   }
     render() {
       let {changeScreen} = this.props;

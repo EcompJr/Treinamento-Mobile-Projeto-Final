@@ -32,11 +32,15 @@ class EJRegisterScreen extends Component {
   } 
 
   register = () => {
-    firebase.database().ref('ej/' + this.state.ejName.replace(' ', '')).set({
+    var root = firebase.database().ref();
+    var postData = {
       ejName: this.state.ejName,
-      cityState: this.state.cityState    
+      cityState: this.state.cityState
+    };
+    changeScreenFunction = this.props.changeScreen;
+    root.child("ej").child(this.state.ejName).set(postData).then(function () {
+      changeScreenFunction('memberRegisterScreen');
     });
-    this.props.changeScreen('memberRegisterScreen');    
   }
 
   render() {

@@ -5,6 +5,7 @@ import LoginScreen from './../screens/LoginScreen/';
 import EJRegisterScreen from './../screens/EJRegisterScreen/';
 import MemberRegisterScreen from './../screens/MemberRegisterScreen/';
 import FirstScreen from './../screens/FirstScreen/';
+import ListScreen from './../screens/ListScreen/';
 
 
 // create a component
@@ -31,6 +32,8 @@ class Router extends Component {
             return <MemberRegisterScreen changeScreen={this.changeScreen} />;            
         } else if(screenName == 'firstScreen') {
             return <FirstScreen changeScreen={this.changeScreen} />;
+        } else if(screenName == 'listScreen') {
+            return <ListScreen changeScreen={this.changeScreen} />;
         }
     }
 

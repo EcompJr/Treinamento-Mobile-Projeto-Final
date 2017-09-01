@@ -13,16 +13,49 @@ if (!firebase.apps.length) {
     storageBucket: "mobilefinalecompjr.appspot.com"
   });
 }
+
+const PICKERITEM_COMPONENTS = [];
+
+PICKERITEM_COMPONENTS.push(React.createElement(
+  Picker.Item,
+  {label: "Empresa Júnior", value: "Empresa Júnior"},
+  ''
+));
+
+var ref = firebase.database().ref();
+
+ref.on("value", function(snapshot) {
+  if(snapshot.val().ej != null) {
+    ejs = snapshot.val().ej;        
+    for(var key in ejs) {
+      PICKERITEM_COMPONENTS.push(React.createElement(
+        Picker.Item,
+        {label: ejs[key].ejName, value: ejs[key].ejName},
+        ''
+      ));
+    }
+  }
+}, function (error) {
+  console.log("Error: " + error.code) ;
+});
+
+PICKERITEM_COMPONENTS.push(React.createElement(
+  Picker.Item,
+  {label: "Cadastre Sua EJ", value:"Cadastre sua EJ"},
+  ''
+));
+
+
 // create a component
 class MemberRegisterScreen extends Component {
   constructor() {
     super();
     this.state = {
+        ej: 'Empresa Júnior',      
         name: '',
         role: '',
         email: '',
-        password: '',
-        ej: ''
+        password: ''
     };
   }
 
@@ -33,6 +66,7 @@ class MemberRegisterScreen extends Component {
 
   register = async () => {
     try {
+  
       if(this.state.password.length < 6) {
         alert("A senha deve conter ao menos 6 caracteres!");
         return;        
@@ -43,12 +77,17 @@ class MemberRegisterScreen extends Component {
         return;        
       }
 
+      if(this.state.ej == 'Empresa Júnior') {
+        alert("Escolha uma EJ válida!");
+        return;
+      }
+
       var email = this.state.email;
       var password = this.state.password;
       var name = this.state.name;
       var ej = this.state.ej;
       var role = this.state.role;
-      var changeScreenF = this.props.changeScreen;
+      var changeScreenFunction = this.props.changeScreen;
 
       firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
         var root = firebase.database().ref();
@@ -62,20 +101,18 @@ class MemberRegisterScreen extends Component {
         };
         root.child("users").child(uid).set(postData);
         alert('Cadastro realizado!');
-        changeScreenF('firstScreen');
+        changeScreenFunction('firstScreen');
      })
     } catch(error) {
       alert(error.toString());
     }
-
-
   }
 
   pickerFunction(itemIndex, itemValue) {
-    if(itemIndex == "add") {
+    if(itemIndex == "Cadastre sua EJ") {
       this.props.changeScreen('ejRegisterScreen');
     } else {
-      this.setState({ej: itemValue});
+      this.setState({ej: itemIndex});
     }
   }
     
@@ -89,19 +126,17 @@ class MemberRegisterScreen extends Component {
           </View>
           
           <View style={styles.inputsWrap}>
-            <View style={styles.inputWrap}>
-              <Picker style={styles.holderPicker} onValueChange={(itemValue, itemIndex) => this.pickerFunction(itemValue, itemIndex)}>
-              <Picker.Item style={styles.pickerItem} label="Empresa Júnior" value="add" />
-                <Picker.Item style={styles.pickerItem} label="Cadastre sua EJ" value="add" />
-              </Picker>
-            </View>
-
             <View style={[styles.inputWrap]}>
               <GeralTextInput placeholderName="Nome" inputKey={'name'} updateState={this.updateState} isPassword={false}></GeralTextInput>
             </View>
             <View style={styles.inputWrap}>
               <GeralTextInput placeholderName="Cargo" inputKey={'role'} updateState={this.updateState} isPassword={false}></GeralTextInput>
             </View>
+            <View style={styles.inputWrap}>
+              <Picker style={styles.holderPicker} selectedValue={this.state.ej} onValueChange={(itemValue, itemIndex) => this.pickerFunction(itemValue, itemIndex)}>
+                {PICKERITEM_COMPONENTS}
+              </Picker>
+            </View>            
             <View style={styles.inputWrap}>
               <GeralTextInput placeholderName="Email" inputKey={'email'} updateState={this.updateState}  isPassword={false}></GeralTextInput>
             </View>      

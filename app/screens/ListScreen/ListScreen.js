@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking, ScrollView} from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet , FlatList, Image, TextInput, TouchableOpacity, Linking, ScrollView} from 'react-native';
 import GeralButton from './../../components/GeralButton/';
 import GeralTextInput from './../../components/GeralTextInput/';
 import * as firebase from "firebase";
@@ -8,22 +8,65 @@ import Accordion from 'react-native-collapsible/Accordion';
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
-    apiKey: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
+    apikeyEj: "AIzaSyBhBICcj1AX54I5yMG8__Qox3nJhFguSAI",
     authDomain: "mobilefinalecompjr.firebaseapp.com",
     databaseURL: "https://mobilefinalecompjr.firebaseio.com",
     storageBucket: "mobilefinalecompjr.appspot.com"
   });
 }
-
 const SECTIONS = [
     {
-      title: 'First',
-      content: {user: {name: 'Valmir'}}
+      title: 'Atualizar lista',
+      content: ''
     }
 ];
 
+var ref = firebase.database().ref();
+
+ref.on("value", function(snapshot) {
+    if(snapshot.val() != null && snapshot.val().ej != null && snapshot.val().users != null) {
+        ejs = snapshot.val().ej;
+        users = snapshot.val().users;
+        var update = [];
+        var cont = 0;
+        for(keyEj in ejs) {
+            update = {title: ejs[keyEj].ejName};
+            for(keyUser in users) {
+                if(users[keyUser].ej == ejs[keyEj].ejName) {
+                    nameKey = 'user' + cont + '_name';
+                    roleKey = 'user' + cont + '_role';
+                    emailKey = 'user' + cont + '_email';
+                    
+                    update[nameKey] = users[keyUser].name;
+                    update[roleKey] = users[keyUser].role;
+                    update[emailKey] = users[keyUser].email;
+                    
+                    cont = cont + 1;
+                }
+            }
+            cont = 0;
+
+            SECTIONS.push(update);
+        }
+    }
+}, function (error) {
+    console.log("Error: " + error.code) ;
+});
+
 // create a component
 class ListScreen extends Component {
+    componentWillMount() {
+        // get the current user from firebase
+        // const userData = this.props.firebaseApp.auth().currentUser;
+        AsyncStorage.getItem('userData').then((user_data_json) => {
+            let userData = JSON.parse(user_data_json);
+            this.setState({
+            user: userData,
+            loading: false
+            });
+        });
+
+    }
   _renderHeader(section, index, isActive) {
     return (
       <View style={isActive ? styles.activeHeader : styles.inactiveHeader}>
@@ -33,11 +76,42 @@ class ListScreen extends Component {
   }
 
   _renderContent(section, index, isActive) {
+    var cont = 0;
+    var components = [];
+    while(true) {
+        firstKey = 'user' + cont + '_name';
+        if(firstKey in section) {
+            nameKey = 'user' + cont + '_name';
+            roleKey = 'user' + cont + '_role';
+            emailKey = 'user' + cont + '_email';
+            
+            components.push(React.createElement(
+                Text,
+                {},
+                'Nome: ' + section[nameKey] + '\n' + 'Cargo: ' + section[roleKey] + '\n' + 'Email: ' + section[emailKey] +'\n\n'
+            ));
+
+            cont = cont + 1;
+        } else {
+            break;
+        }
+    }
+
     return (
       <View style={styles.content}>
-        <Text>{section.content.user.name}</Text>
+          {components}
       </View>
     );
+  }
+  
+  logout = () => {
+    var changeScreenFunction = this.props.changeScreen;
+    // logout, once that is complete, return the user to the login screen.
+    AsyncStorage.removeItem('userData').then(() => {
+        firebase.auth().signOut().then(() => {
+            changeScreenFunction('firstScreen');
+        });  
+      });
   }
     
   render() {
@@ -61,7 +135,7 @@ class ListScreen extends Component {
             </View>
 
             <View style={styles.buttonWrap}>
-                <GeralButton buttonName="Logout" clickArguments="" clickFunction={this.register} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
+                <GeralButton buttonName="Logout" clickArguments="" clickFunction={this.logout} buttonColor="#18BC41" buttonBorderColor="white"></GeralButton>              
             </View>
         </View>
     );
